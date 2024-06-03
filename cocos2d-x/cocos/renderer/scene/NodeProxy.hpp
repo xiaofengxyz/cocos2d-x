@@ -138,7 +138,7 @@ public:
      */
     inline const Vector<NodeProxy*>& getChildren() const { return _children; };
     
-    void getChildrenNest(Vector<NodeProxy*> children);
+    void getChildrenNest(Vector<NodeProxy*>& children);
     /**
      *  @brief Gets the node proxy child count.
      *  @return Child count.
@@ -354,7 +354,7 @@ private:
     cocos2d::Mat4* _worldMat = nullptr;
     ParentInfo* _parentInfo = nullptr;
     int32_t* _localZOrder = nullptr;
-    int32_t* _globalZOrder = nullptr;
+    int32_t _globalZOrder = 0;
     
     int32_t* _cullingMask = nullptr;
     uint8_t* _opacity = nullptr;

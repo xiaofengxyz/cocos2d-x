@@ -287,9 +287,12 @@ void NodeProxy::setLocalZOrder(int zOrder)
 
 void NodeProxy::setGlobalZOrder(int zOrder)
 {
-    if (*_globalZOrder != zOrder)
+//    CCLOGWARN("NodeProxy::setGlobalZOrder----------------");
+
+    if (_globalZOrder != zOrder)
     {
-        *_globalZOrder = zOrder;
+//        CCLOGWARN("NodeProxy::setGlobalZOrder---------------- set");
+        _globalZOrder = zOrder;
         if (_parent != nullptr)
         {
             _globalDirty = true;
@@ -320,12 +323,18 @@ void NodeProxy::reorderChildrenGroup()
     {
         _childrenGroup.reserve(4);
     }
+
     _childrenGroup.clear();
-    
+
+
     getChildrenNest(_childrenGroup);
-    
+//    CCLOGWARN("NodeProxy::reorderChildrenGroup---------------");
+//    CCLOGWARN("NodeProxy::reorderChildrenGroup _globalDirty: %d", _globalDirty ? 1 : 0);
+//    CCLOGWARN("NodeProxy::getChildrenNest _childrenGroup: %d", _childrenGroup.size());
     if (_globalDirty || *_dirty & RenderFlow::REORDER_CHILDREN)
     {
+//        CCLOGWARN("NodeProxy::reorderChildrenGroup---------------2222");
+
 #if CC_64BITS
         std::sort(std::begin(_children), std::end(_children), [](NodeProxy* n1, NodeProxy* n2) {
             return n1->_globalZOrder < n2->_globalZOrder;
@@ -560,9 +569,11 @@ void NodeProxy::updateLocalMatrix()
 void NodeProxy::render(NodeProxy* node, ModelBatcher* batcher, Scene* scene, bool isNest)
 {
     node->_renderOrder = _globalRenderOrder++;
-    
-    if (!node->_needVisit || node->_realOpacity == 0) return;
 
+//    CCLOGWARN("NodeProxy::render----------------");
+
+    if (!node->_needVisit || node->_realOpacity == 0) return;
+//    CCLOGWARN("NodeProxy::render----------------1111");
     bool needRender = *node->_dirty & RenderFlow::RENDER;
     if (node->_needRender != needRender)
     {
@@ -572,12 +583,13 @@ void NodeProxy::render(NodeProxy* node, ModelBatcher* batcher, Scene* scene, boo
     
     // pre render
     if (node->_assembler && needRender) node->_assembler->handle(node, batcher, scene);
-
+//    CCLOGWARN("NodeProxy::render----------------2222");
     if (isNest) {
+//        CCLOGWARN("NodeProxy::render----------------3333");
         if (node->_isGroup) {
-
+//            CCLOGWARN("NodeProxy::render----------------4444");
             node->reorderChildrenGroup();
-            
+//            CCLOGINFO("NodeProxy::render: %d", node->_childrenGroup.size());
             for (const auto& child : node->_childrenGroup)
             {
                 auto traverseHandle = child->traverseHandle;
@@ -585,6 +597,8 @@ void NodeProxy::render(NodeProxy* node, ModelBatcher* batcher, Scene* scene, boo
             }
         }
         else {
+
+//            CCLOGWARN("NodeProxy::render----------------5555");
             node->reorderChildren();
             for (const auto& child : node->_children)
             {
@@ -594,28 +608,32 @@ void NodeProxy::render(NodeProxy* node, ModelBatcher* batcher, Scene* scene, boo
         }
         
     }
-   
+//    CCLOGWARN("NodeProxy::render----------------6666");
     // post render
     bool needPostRender = *(node->_dirty) & RenderFlow::POST_RENDER;
     if (node->_assembler && needPostRender) node->_assembler->postHandle(node, batcher, scene);
 }
 
-void NodeProxy:: getChildrenNest(Vector<NodeProxy*> children) {
+void NodeProxy:: getChildrenNest(Vector<NodeProxy*>& children) {
     if (children.empty())
     {
         children.reserve(4);
     }
-    auto chs = this->getChildren();
+    auto chs = getChildren();
+
+//    CCLOGWARN("NodeProxy::getChildrenNest: %d", chs.size());
+
     for (const auto& child : chs)
     {
         children.pushBack(child);
         child->getChildrenNest(children);
     }
-    
+//    CCLOGWARN("NodeProxy::getChildrenNest after: %d", children.size());
 }
 
 void NodeProxy::visit(NodeProxy* node, ModelBatcher* batcher, Scene* scene, bool isNest)
 {
+    CCLOGWARN("NodeProxy::visit----------------");
     node->_renderOrder = _globalRenderOrder++;
     
     if (!node->_needVisit) return;
