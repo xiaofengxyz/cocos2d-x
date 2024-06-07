@@ -336,11 +336,11 @@ void NodeProxy::reorderChildrenGroup()
 //        CCLOGWARN("NodeProxy::reorderChildrenGroup---------------2222");
 
 #if CC_64BITS
-        std::sort(std::begin(_children), std::end(_children), [](NodeProxy* n1, NodeProxy* n2) {
+        std::sort(std::begin(_childrenGroup), std::end(_childrenGroup), [](NodeProxy* n1, NodeProxy* n2) {
             return n1->_globalZOrder < n2->_globalZOrder;
         });
 #else
-        std::stable_sort(std::begin(children), std::end(children), [](NodeProxy* n1, NodeProxy* n2) {
+        std::stable_sort(std::begin(_childrenGroup), std::end(_childrenGroup), [](NodeProxy* n1, NodeProxy* n2) {
             return n1->_globalZOrder < n2->_globalZOrder;
         });
 #endif
