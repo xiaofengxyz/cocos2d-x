@@ -26,6 +26,7 @@
 #pragma once
 
 #include "platform/CCPlatformConfig.h"
+#include <functional>
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
