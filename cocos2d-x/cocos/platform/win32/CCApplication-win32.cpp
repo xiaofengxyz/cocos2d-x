@@ -425,6 +425,12 @@ void Application::createView(const std::string& name, int width, int height)
                  multisamplingCount);
 
     _view = new GLView(this, name, 0, 0, width, height, pixelformat, depthFormat, multisamplingCount);
+
+    // Set window properties
+    HWND hwnd = glfwGetWin32Window(CAST_VIEW(_view)->getGLFWWindow());
+    LONG style = GetWindowLong(hwnd, GWL_STYLE);
+    style &= ~(WS_THICKFRAME);
+    SetWindowLong(hwnd, GWL_STYLE, style);
 }
 
 std::string Application::getSystemVersion()
